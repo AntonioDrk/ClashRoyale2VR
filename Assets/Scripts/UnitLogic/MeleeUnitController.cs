@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.AI;
 
 public class MeleeUnitController : UnitController
@@ -8,24 +6,26 @@ public class MeleeUnitController : UnitController
      
     void Start()
     {
+        TestsChecker();
+        
         Health = 100;
         Damage = 20;
-        Range = 1.5f;
+        Range = 0.5f;
         Speed = 10;
         TriggerZoneRadius = 5;
 
         anim = gameObject.GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>(); 
-        cc = GetComponent<CapsuleCollider>();
+        meshRenderer = GetComponent<MeshRenderer>();
+        cc = transform.GetChild(0).GetComponent<CapsuleCollider>();
 
         cc.radius = TriggerZoneRadius;
 
-        setTarget();
+        SetTarget();
     }
 
     protected override void Attack()
     {
-        var targetType = target.gameObject.tag;
         var targetScript = getTargetScript(target);
         targetScript.TakeDamage(Damage);
 
