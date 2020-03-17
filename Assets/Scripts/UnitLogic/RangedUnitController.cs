@@ -3,9 +3,6 @@ using UnityEngine.AI;
 
 public class RangedUnitController : UnitController
 {
-    
-    public float bulletForce = 20f;
-
     public Transform firePoint;
     public GameObject bulletPrefab;
 
@@ -16,8 +13,8 @@ public class RangedUnitController : UnitController
         Health = 200;
         Damage = 25;
         Speed = 10;
-        TriggerZoneRadius = 5;
-        Range = TriggerZoneRadius;
+        TriggerZoneRadius = 10;
+        Range = 2.5f;
 
         meshRenderer = GetComponent<MeshRenderer>();
         anim = gameObject.GetComponent<Animator>();
@@ -47,12 +44,15 @@ public class RangedUnitController : UnitController
         // Calculate a rotation a step closer to the target and applies rotation to this object
         transform.rotation = Quaternion.LookRotation(newDirection);*/
 
-        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
+        bullet.transform.parent = null;
         var bulletScript = bullet.GetComponent<BulletController>();
+        bulletScript.Speed = 2f;
+        bulletScript.ArcHeightCoef = .75f;
         bulletScript.Damage = Damage;
-        bulletScript.OwnerId = OwnerId;
-        bulletScript.Owner = GetComponent<RangedUnitController>();
-        Rigidbody rb = bullet.GetComponent<Rigidbody>();
-        rb.AddForce(firePoint.forward * bulletForce, ForceMode.Impulse);
+        bulletScript.ownerId = OwnerId;
+        bulletScript.TargetPos = target.transform.position;
+        //Rigidbody rb = bullet.GetComponent<Rigidbody>();
+        //rb.AddForce(firePoint.forward * bulletForce, ForceMode.Impulse);
     }
 }
