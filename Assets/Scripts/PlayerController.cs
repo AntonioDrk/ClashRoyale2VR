@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public float Mana { get; set; }
+    public bool testingMode;
+    public float Mana;
     public float MaxMana { get; set; }
     public float ManaRegen { get; set; }
 
@@ -13,7 +14,9 @@ public class PlayerController : MonoBehaviour
     protected float Timer;
     public GameObject rangedGroup;
     public GameObject meleeGroup;
-    public Transform playerSide;
+
+    public GameObject EnemySide;
+    public Material EnemyMaterial;
 
     // Start is called before the first frame update
     void Start()
@@ -30,8 +33,36 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 mousePos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0f);
 
-        if (Input.GetMouseButtonDown(0))
+        GameObject units = null;
+        int ownerId = 1;
+
+        if (Input.GetKeyDown(KeyCode.Q))
+            units = meleeGroup;
+        else if (Input.GetKeyDown(KeyCode.W))
+            units = rangedGroup;
+        else if (testingMode && Input.GetKeyDown(KeyCode.A))
         {
+            units = meleeGroup;
+            ownerId = 2;
+        }
+        else if (testingMode && Input.GetKeyDown(KeyCode.S))
+        {
+            units = rangedGroup;
+            ownerId = 2;
+        }
+
+        if (units != null)
+        {
+            var cost = units.GetComponent<GroupController>().Cost;
+
+            if(!testingMode)
+            {
+                if (Mana < cost)
+                    return;
+
+                Mana -= cost;
+            }
+
             Vector3 wordPos;
             Ray ray = Camera.main.ScreenPointToRay(mousePos);
             RaycastHit hit;
@@ -43,13 +74,30 @@ public class PlayerController : MonoBehaviour
             {
                 wordPos = Camera.main.ScreenToWorldPoint(mousePos);
             }
-            Debug.Log(wordPos.x + " " + wordPos.y + " " + wordPos.z);
-            GameObject go = Instantiate(meleeGroup, wordPos, Quaternion.identity);
-            go.transform.SetParent(playerSide);
+            
+            GameObject go = Instantiate(units) as GameObject;
+
+            if(ownerId == 1)
+                go.transform.SetParent(this.transform);
+            else
+                go.transform.SetParent(EnemySide.transform);
+
             go.transform.localScale = new Vector3(0.15f, 0.15f, 0.15f);
+            
+            for(int i=0; i<go.transform.childCount; i++)
+            {
+                var child = go.transform.GetChild(i); 
+                child.GetComponent<UnityEngine.AI.NavMeshAgent>().Warp(wordPos);
+
+                if (ownerId == 2)
+                {
+                    child.GetComponent<UnitController>().OwnerId = ownerId;
+                    child.GetComponent<MeshRenderer>().material = EnemyMaterial;
+                }
+            }
         }
     }
-
+    
     private IEnumerator ManaTimer()
     {
         while (true)

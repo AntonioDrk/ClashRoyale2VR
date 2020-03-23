@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GroupController : MonoBehaviour
 {
-    public float Cost { get; set; }
+    public float Cost;
 
     // Start is called before the first frame update
     void Start()
@@ -15,6 +15,6 @@ public class GroupController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }
