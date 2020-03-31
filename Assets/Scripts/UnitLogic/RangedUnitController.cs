@@ -3,7 +3,9 @@ using UnityEngine.AI;
 
 public class RangedUnitController : UnitController
 {
-    public Transform firePoint;
+    [SerializeField]
+    private Transform firePoint;
+    [SerializeField]
     public GameObject bulletPrefab;
 
     void Start()
@@ -26,6 +28,9 @@ public class RangedUnitController : UnitController
         SetTarget();
     }
 
+    /// <summary>
+    /// Attacks the current target
+    /// </summary>
     protected override void Attack()
     {
         /* All of this happens in the UnitController for all units

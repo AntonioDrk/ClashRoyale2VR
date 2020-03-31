@@ -241,12 +241,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e34f28c2a5078074fb7fa67dedbb6796, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Health: 200
-  Damage: 0
-  Range: 0
-  OwnerId: 2
-  Speed: 0
-  TriggerZoneRadius: 0
+  _health: 200
+  _damage: 25
+  _range: 2.5
+  _ownerId: 1
+  _speed: 10
+  _triggerZoneRadius: 10
   firePoint: {fileID: 3263656568431834635}
   bulletPrefab: {fileID: 3122823243493803116, guid: 85b15b6ec30f4dc4aae19d1ed8f04a7c,
     type: 3}

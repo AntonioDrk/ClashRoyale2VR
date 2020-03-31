@@ -4,24 +4,29 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public bool testingMode;
-    public float Mana;
+    [SerializeField]
+    private bool _testingMode;
+
+    public float Mana { get; set;}
     public float MaxMana { get; set; }
     public float ManaRegen { get; set; }
 
-    private float RegenTime = 1; // Second count
+    private float _regenTime = 1; // Seconds count
 
-    protected float Timer;
-    public GameObject rangedGroup;
-    public GameObject meleeGroup;
+    [SerializeField]
+    private GameObject rangedGroup;
+    [SerializeField]
+    private GameObject meleeGroup;
 
-    public GameObject EnemySide;
-    public Material EnemyMaterial;
+    [SerializeField]
+    private GameObject EnemySide;
+    [SerializeField]
+    private Material EnemyMaterial;
 
     // Start is called before the first frame update
     void Start()
     {
-        Mana = 250;
+        Mana = 250; 
         MaxMana = 1000;
         ManaRegen = 50;
 
@@ -40,12 +45,12 @@ public class PlayerController : MonoBehaviour
             units = meleeGroup;
         else if (Input.GetKeyDown(KeyCode.W))
             units = rangedGroup;
-        else if (testingMode && Input.GetKeyDown(KeyCode.A))
+        else if (_testingMode && Input.GetKeyDown(KeyCode.A))
         {
             units = meleeGroup;
             ownerId = 2;
         }
-        else if (testingMode && Input.GetKeyDown(KeyCode.S))
+        else if (_testingMode && Input.GetKeyDown(KeyCode.S))
         {
             units = rangedGroup;
             ownerId = 2;
@@ -53,56 +58,71 @@ public class PlayerController : MonoBehaviour
 
         if (units != null)
         {
-            var cost = units.GetComponent<GroupController>().Cost;
+            SpawnUnits(mousePos, units, ownerId);
+        }
+    }
 
-            if(!testingMode)
+    /// <summary>
+    /// Spawns a group of units at mouse position
+    /// </summary>
+    /// <param name="mousePos"> The current position of the mouse </param>
+    /// <param name="units"> The units to be spawned </param>
+    /// <param name="ownerId"> The Id of the owner </param>
+    public void SpawnUnits(Vector3 mousePos, GameObject units, int ownerId)
+    {
+        var cost = units.GetComponent<GroupController>().Cost;
+
+        if (!_testingMode)
+        {
+            if (Mana < cost)
+                return;
+
+            Mana -= cost;
+        }
+
+        Vector3 wordPos;
+        Ray ray = Camera.main.ScreenPointToRay(mousePos);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, 1000f))
+        {
+            wordPos = hit.point;
+        }
+        else
+        {
+            wordPos = Camera.main.ScreenToWorldPoint(mousePos);
+        }
+
+        GameObject go = Instantiate(units) as GameObject;
+
+        if (ownerId == 1)
+            go.transform.SetParent(this.transform);
+        else
+            go.transform.SetParent(EnemySide.transform);
+
+        go.transform.localScale = new Vector3(0.15f, 0.15f, 0.15f);
+
+        for (int i = 0; i < go.transform.childCount; i++)
+        {
+            var child = go.transform.GetChild(i);
+            child.GetComponent<UnityEngine.AI.NavMeshAgent>().Warp(wordPos);
+
+            if (ownerId == 2)
             {
-                if (Mana < cost)
-                    return;
-
-                Mana -= cost;
-            }
-
-            Vector3 wordPos;
-            Ray ray = Camera.main.ScreenPointToRay(mousePos);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, 1000f))
-            {
-                wordPos = hit.point;
-            }
-            else
-            {
-                wordPos = Camera.main.ScreenToWorldPoint(mousePos);
-            }
-            
-            GameObject go = Instantiate(units) as GameObject;
-
-            if(ownerId == 1)
-                go.transform.SetParent(this.transform);
-            else
-                go.transform.SetParent(EnemySide.transform);
-
-            go.transform.localScale = new Vector3(0.15f, 0.15f, 0.15f);
-            
-            for(int i=0; i<go.transform.childCount; i++)
-            {
-                var child = go.transform.GetChild(i); 
-                child.GetComponent<UnityEngine.AI.NavMeshAgent>().Warp(wordPos);
-
-                if (ownerId == 2)
-                {
-                    child.GetComponent<UnitController>().OwnerId = ownerId;
-                    child.GetComponent<MeshRenderer>().material = EnemyMaterial;
-                }
+                child.GetComponent<UnitController>().OwnerId = ownerId;
+                child.GetComponent<MeshRenderer>().material = EnemyMaterial;
             }
         }
     }
-    
+
+    /// <summary>
+    /// Timer for the mana regeneration
+    /// </summary>
+    /// <returns> Flag for when _regenTime number of seconds passed </returns>
     private IEnumerator ManaTimer()
     {
         while (true)
         {
-            yield return new WaitForSeconds(RegenTime);
+            yield return new WaitForSeconds(_regenTime);
             if(Mana < MaxMana)
                 Mana += ManaRegen;
             if (Mana > MaxMana)

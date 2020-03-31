@@ -8,7 +8,7 @@ public class TowerController: EntityController
     void Start()
     {
         Health = 250;
-        Damage = 20;
+        Damage = 50;
         Range = 1.5f;
     }
 

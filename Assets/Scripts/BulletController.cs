@@ -7,10 +7,6 @@ using UnityEngine;
 public class BulletController : MonoBehaviour
 {
     private float _damage;
-    // Public fields should be properties
-    /// <summary>
-    /// What do you think this does?
-    /// </summary>
     public float Damage { get => _damage; set => _damage = value < 0 ? 0 : value; }
     public int ownerId;
     

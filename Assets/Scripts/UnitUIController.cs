@@ -11,8 +11,6 @@ public class UnitUIController : MonoBehaviour
     [SerializeField] private Image fill;
     [SerializeField] private Camera mainCamera;
 
-
-
     private void Start()
     {
         mainCamera = Camera.main;

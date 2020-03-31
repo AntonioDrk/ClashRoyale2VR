@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    public Transform target;
+    [SerializeField]
+    private Transform target;
 
     private Vector3 _cameraOffset;
 
-    public float smoothFactor = 0.5f;
+    private float _smoothFactor = 0.5f;
 
     // Start is called before the first frame update
     void Start()
@@ -22,6 +23,6 @@ public class CameraController : MonoBehaviour
     {
         Vector3 newPosition = target.position + _cameraOffset;
 
-        transform.position = Vector3.Slerp(transform.position, newPosition, smoothFactor);
+        transform.position = Vector3.Slerp(transform.position, newPosition, _smoothFactor);
     }
 }

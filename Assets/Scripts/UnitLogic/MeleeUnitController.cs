@@ -3,7 +3,6 @@ using UnityEngine.AI;
 
 public class MeleeUnitController : UnitController
 {
-     
     void Start()
     {
         TestsChecker();
@@ -24,6 +23,9 @@ public class MeleeUnitController : UnitController
         SetTarget();
     }
 
+    /// <summary>
+    /// Attacks the current target
+    /// </summary>
     protected override void Attack()
     {
         var targetScript = getTargetScript(target);

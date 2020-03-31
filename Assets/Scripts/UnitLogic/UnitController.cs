@@ -7,16 +7,21 @@ using UnityEngine.AI;
 
 public class UnitController : EntityController
 {
-    public float Speed;
-    public float TriggerZoneRadius;
+    [SerializeField]
+    private float _speed;
+    public float Speed { get => _speed; set => _speed = value < 0 ? 0 : value; }
+
+    [SerializeField]
+    private float _triggerZoneRadius;
+    public float TriggerZoneRadius { get => _triggerZoneRadius; set => _triggerZoneRadius = value < 0 ? 0 : value; }
 
     protected NavMeshAgent agent;
 
     private float distance = 999;
     
-    // Cooldown of the attacks
-    protected float attackCooldown = 1f;
-    private float cooldown = 0;
+    // cooldown of the attacks
+    protected float _attackCooldown = 1f;
+    private float _cooldown = 0;
 
     // Represents the closest enemy tower to move towards
     protected GameObject mainTarget;
@@ -94,10 +99,10 @@ public class UnitController : EntityController
             agent.destination = transform.position;
 
             // If we have already a selected target, put the attack in cooldown
-            cooldown += Time.deltaTime;
-            if (cooldown > attackCooldown)
+            _cooldown += Time.deltaTime;
+            if (_cooldown > _attackCooldown)
             {
-                cooldown = 0;
+                _cooldown = 0;
                 Attack();
             }
         }

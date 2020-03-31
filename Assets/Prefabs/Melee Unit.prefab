@@ -412,12 +412,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f7810147cfe9124294de9b78c2da96a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Health: 100
-  Damage: 0
-  Range: 0
-  OwnerId: 1
-  Speed: 0
-  TriggerZoneRadius: 0
+  _health: 100
+  _damage: 20
+  _range: 0.5
+  _ownerId: 1
+  _speed: 10
+  _triggerZoneRadius: 5
 --- !u!54 &7650555260063300632
 Rigidbody:
   m_ObjectHideFlags: 0

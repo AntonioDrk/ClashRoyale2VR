@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class GroupController : MonoBehaviour
 {
-    public float Cost;
+    [SerializeField]
+    private float _cost;
+    public float Cost { get => _cost; set => _cost = value < 0 ? 0 : value; }
 
-    // Start is called before the first frame update
     void Start()
     {
-        
+            
     }
 
     // Update is called once per frame
