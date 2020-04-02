@@ -36,7 +36,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 mousePos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0f);
+        Vector3 mousePos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0f); 
 
         GameObject units = null;
         int ownerId = 1;
@@ -80,16 +80,17 @@ public class PlayerController : MonoBehaviour
             Mana -= cost;
         }
 
-        Vector3 wordPos;
+        Vector3 worldPos;
         Ray ray = Camera.main.ScreenPointToRay(mousePos);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, 1000f))
         {
-            wordPos = hit.point;
+            worldPos = hit.point;
         }
         else
         {
-            wordPos = Camera.main.ScreenToWorldPoint(mousePos);
+            worldPos = Camera.main.ScreenToWorldPoint(mousePos);
+            return;
         }
 
         GameObject go = Instantiate(units) as GameObject;
@@ -100,11 +101,14 @@ public class PlayerController : MonoBehaviour
             go.transform.SetParent(EnemySide.transform);
 
         go.transform.localScale = new Vector3(0.15f, 0.15f, 0.15f);
+        worldPos = new Vector3(worldPos.x, 3.3f, worldPos.z);
 
         for (int i = 0; i < go.transform.childCount; i++)
         {
             var child = go.transform.GetChild(i);
-            child.GetComponent<UnityEngine.AI.NavMeshAgent>().Warp(wordPos);
+            var agent = child.GetComponent<UnityEngine.AI.NavMeshAgent>();
+            agent.Warp(worldPos);
+            agent.enabled = true;
 
             if (ownerId == 2)
             {

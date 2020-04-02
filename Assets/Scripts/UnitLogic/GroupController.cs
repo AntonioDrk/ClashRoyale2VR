@@ -10,7 +10,7 @@ public class GroupController : MonoBehaviour
 
     void Start()
     {
-            
+
     }
 
     // Update is called once per frame

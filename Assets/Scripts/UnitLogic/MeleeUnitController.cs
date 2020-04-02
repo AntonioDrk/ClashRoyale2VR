@@ -18,7 +18,7 @@ public class MeleeUnitController : UnitController
         meshRenderer = GetComponent<MeshRenderer>();
         cc = transform.GetChild(0).GetComponent<CapsuleCollider>();
 
-        cc.radius = TriggerZoneRadius;
+        cc.radius = TriggerZoneRadius; 
 
         SetTarget();
     }

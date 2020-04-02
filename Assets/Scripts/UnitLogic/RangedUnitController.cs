@@ -49,14 +49,17 @@ public class RangedUnitController : UnitController
         // Calculate a rotation a step closer to the target and applies rotation to this object
         transform.rotation = Quaternion.LookRotation(newDirection);*/
 
-        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
-        bullet.transform.parent = null;
-        var bulletScript = bullet.GetComponent<BulletController>();
-        bulletScript.Speed = 2f;
-        bulletScript.ArcHeightCoef = .75f;
-        bulletScript.Damage = Damage;
-        bulletScript.ownerId = OwnerId;
-        bulletScript.TargetPos = target.transform.position;
+        if(target)
+        {
+            GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
+            bullet.transform.parent = null;
+            var bulletScript = bullet.GetComponent<BulletController>();
+            bulletScript.Speed = 2f;
+            bulletScript.ArcHeightCoef = .75f;
+            bulletScript.Damage = Damage;
+            bulletScript.ownerId = OwnerId;
+            bulletScript.TargetPos = target.transform.position;
+        }
         //Rigidbody rb = bullet.GetComponent<Rigidbody>();
         //rb.AddForce(firePoint.forward * bulletForce, ForceMode.Impulse);
     }
