@@ -2,20 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GroupController : MonoBehaviour
+namespace MyScripts
 {
-    [SerializeField]
-    private float _cost;
-    public float Cost { get => _cost; set => _cost = value < 0 ? 0 : value; }
-
-    void Start()
+    public class GroupController : MonoBehaviour
     {
+        [SerializeField] private float _cost;
 
-    }
+        public float Cost
+        {
+            get => _cost;
+            set => _cost = value < 0 ? 0 : value;
+        }
 
-    // Update is called once per frame
-    void Update()
-    {
+        void Start()
+        {
 
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+
+        }
     }
 }

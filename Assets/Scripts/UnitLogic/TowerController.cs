@@ -2,19 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TowerController: EntityController
+namespace MyScripts
 {
-    // Start is called before the first frame update
-    void Start()
+    public class TowerController: EntityController
     {
-        Health = 250;
-        Damage = 50;
-        Range = 1.5f;
+        // Start is called before the first frame update
+        void Start()
+        {
+            Health = 250;
+            Damage = 50;
+            Range = 1.5f;
+        }
+    
+        // Update is called once per frame
+        void Update()
+        {
+    
+        }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 }
+
