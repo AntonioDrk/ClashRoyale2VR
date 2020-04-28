@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -23,12 +24,21 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private Material EnemyMaterial;
 
+    [SerializeField] 
+    private ManaBar manaBar; 
+    [SerializeField] 
+    private Text manaText; 
+
     // Start is called before the first frame update
     void Start()
     {
         Mana = 250; 
         MaxMana = 1000;
         ManaRegen = 50;
+
+        manaBar.SetMaxMana(MaxMana);
+        manaBar.SetMana(Mana);
+        manaText.text = Mana.ToString() + " / " + MaxMana.ToString();
 
         StartCoroutine(ManaTimer());
     }
@@ -128,9 +138,19 @@ public class PlayerController : MonoBehaviour
         {
             yield return new WaitForSeconds(_regenTime);
             if(Mana < MaxMana)
+            {
                 Mana += ManaRegen;
+                manaBar.SetMana(Mana);
+                manaText.text = Mana.ToString() + " / " + MaxMana.ToString();
+            }
+                
             if (Mana > MaxMana)
+            {
                 Mana = MaxMana;
+                manaBar.SetMana(Mana);
+                manaText.text = Mana.ToString() + " / " + MaxMana.ToString();
+            }
+                
         }
     }
 }
