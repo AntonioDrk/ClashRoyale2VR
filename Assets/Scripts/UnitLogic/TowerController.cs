@@ -30,8 +30,8 @@ public class TowerController: EntityController
     {
         Health = 1000;
         Damage = 50;
-        TriggerZoneRadius = 2f;
-        Range = 2f;
+        TriggerZoneRadius = 3f;
+        Range = 3f;
 
         meshRenderer = GetComponent<MeshRenderer>();
         cc = GetComponent<CapsuleCollider>();

@@ -27,7 +27,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] 
     private ManaBar manaBar; 
     [SerializeField] 
-    private Text manaText; 
+    private Text manaText;
+
+    public List<GameObject> playerUnits = new List<GameObject>();
+    public List<GameObject> enemyUnits = new List<GameObject>();
 
     // Start is called before the first frame update
     void Start()
@@ -39,6 +42,14 @@ public class PlayerController : MonoBehaviour
         manaBar.SetMaxMana(MaxMana);
         manaBar.SetMana(Mana);
         manaText.text = Mana.ToString() + " / " + MaxMana.ToString();
+
+        AddRandomUnit(playerUnits);
+        AddRandomUnit(playerUnits);
+        AddRandomUnit(playerUnits);
+
+        AddRandomUnit(enemyUnits);
+        AddRandomUnit(enemyUnits);
+        AddRandomUnit(enemyUnits);
 
         StartCoroutine(ManaTimer());
     }
@@ -84,10 +95,13 @@ public class PlayerController : MonoBehaviour
 
         if (!_testingMode)
         {
-            if (Mana < cost)
+            if (!playerUnits.Contains(units) || Mana < cost)
                 return;
 
             Mana -= cost;
+
+            playerUnits.Remove(units);
+            AddRandomUnit(playerUnits);
         }
 
         Vector3 worldPos;
@@ -126,6 +140,20 @@ public class PlayerController : MonoBehaviour
                 child.GetComponent<MeshRenderer>().material = EnemyMaterial;
             }
         }
+    }
+
+    /// <summary>
+    /// Add a random unit to the units list
+    /// </summary>
+    /// <param name="units"> The units list </param>
+    private void AddRandomUnit(List<GameObject> units)
+    {
+        float val = Random.Range(1, 100);
+
+        if (val < 50)
+            units.Add(meleeGroup);
+        else
+            units.Add(rangedGroup);
     }
 
     /// <summary>
