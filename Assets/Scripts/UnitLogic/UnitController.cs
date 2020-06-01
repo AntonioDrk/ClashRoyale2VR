@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
+//using System.Diagnostics;
 
 public class UnitController : EntityController
 {
@@ -41,7 +42,6 @@ public class UnitController : EntityController
         if (mainTarget == null)
         {
             SetTarget();
-            
             // If we searched for towers and there still aren't any it means we won (or game ended)
             if (mainTarget == null)
                 return;

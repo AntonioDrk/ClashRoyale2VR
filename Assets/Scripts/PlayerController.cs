@@ -2,13 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.IO;
+
 
 public class PlayerController : MonoBehaviour
 {
+    System.Random ran;
+
+
     [SerializeField]
     private bool _testingMode;
 
-    public float Mana { get; set;}
+    public float Mana_human { get; set;}
+    public float Mana_computer { get; set;}
     public float MaxMana { get; set; }
     public float ManaRegen { get; set; }
 
@@ -35,13 +41,16 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Mana = 250; 
+        ran = new System.Random();
+
+        Mana_human = 250;
+        Mana_computer = 250;
         MaxMana = 1000;
         ManaRegen = 50;
 
         manaBar.SetMaxMana(MaxMana);
-        manaBar.SetMana(Mana);
-        manaText.text = Mana.ToString() + " / " + MaxMana.ToString();
+        manaBar.SetMana(Mana_human);
+        manaText.text = Mana_human.ToString() + " / " + MaxMana.ToString();
 
         AddRandomUnit(playerUnits);
         AddRandomUnit(playerUnits);
@@ -57,13 +66,16 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         Vector3 mousePos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0f); 
 
         GameObject units = null;
         int ownerId = 1;
 
         if (Input.GetKeyDown(KeyCode.Q))
+        {
             units = meleeGroup;
+        }
         else if (Input.GetKeyDown(KeyCode.W))
             units = rangedGroup;
         else if (_testingMode && Input.GetKeyDown(KeyCode.A))
@@ -75,6 +87,19 @@ public class PlayerController : MonoBehaviour
         {
             units = rangedGroup;
             ownerId = 2;
+        }
+
+        //when testing mode is true, the computer is not allowed to choose his moves
+        if (Mana_computer >= rangedGroup.GetComponent<GroupController>().Cost &&  _testingMode==false)//computerul face o mutare
+        {
+            Vector3 AIpos = new Vector3(396f, 249f, 0f);
+            
+            int val = ran.Next(0, 10);
+            Debug.Log("val = " + val);
+            if (val % 2 == 0)
+                SpawnUnits(AIpos, rangedGroup, ownerId=2);
+            else
+                SpawnUnits(AIpos, meleeGroup, ownerId=2);
         }
 
         if (units != null)
@@ -93,16 +118,30 @@ public class PlayerController : MonoBehaviour
     {
         var cost = units.GetComponent<GroupController>().Cost;
 
-        if (!_testingMode)
+        //I think the code below was meant to temporarily replace the AI so I commented it (Smit) 
+        /*if (!_testingMode)
         {
-            if (!playerUnits.Contains(units) || Mana < cost)
+            if (!playerUnits.Contains(units) || Mana_human < cost)
                 return;
 
-            Mana -= cost;
+            Mana_human -= cost;
 
-            playerUnits.Remove(units);
+            playerUnits.Remove(units);//was this line important?
             AddRandomUnit(playerUnits);
-        }
+        }*/
+
+
+        if (ownerId == 1 && Mana_human < cost)
+            return;
+        if (ownerId == 2 && Mana_computer < cost)
+            return;
+        if (ownerId == 1)
+                Mana_human -= cost;
+        if (ownerId == 2)
+            Mana_computer -= cost;
+            
+        playerUnits.Remove(units);//nu stiu ce face linia asta
+
 
         Vector3 worldPos;
         Ray ray = Camera.main.ScreenPointToRay(mousePos);
@@ -165,20 +204,31 @@ public class PlayerController : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(_regenTime);
-            if(Mana < MaxMana)
+
+            //update Human's mana
+            if(Mana_human < MaxMana)
             {
-                Mana += ManaRegen;
-                manaBar.SetMana(Mana);
-                manaText.text = Mana.ToString() + " / " + MaxMana.ToString();
-            }
-                
-            if (Mana > MaxMana)
+                Mana_human += ManaRegen;
+                manaBar.SetMana(Mana_human);//human has a visible manaBar, computer has not
+                manaText.text = Mana_human.ToString() + " / " + MaxMana.ToString();
+            } 
+            if (Mana_human > MaxMana)
             {
-                Mana = MaxMana;
-                manaBar.SetMana(Mana);
-                manaText.text = Mana.ToString() + " / " + MaxMana.ToString();
+                Mana_human = MaxMana;
+                manaBar.SetMana(Mana_human);
+                manaText.text = Mana_human.ToString() + " / " + MaxMana.ToString();
             }
-                
+
+            //update computer's mana
+            if (Mana_computer < MaxMana)
+            {
+                Mana_computer += ManaRegen;
+            }
+            if (Mana_computer > MaxMana)
+            {
+                Mana_computer = MaxMana;
+            }
+
         }
     }
 }
