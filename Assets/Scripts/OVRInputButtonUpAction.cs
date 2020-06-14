@@ -8,7 +8,7 @@ namespace MyScripts
         public OVRInput.Button button;
         void Update()
         {
-            Receive(OVRInput.GetUp(button, controller));
+            Receive(OVRInput.GetUp(button, controller) || OVRInput.GetUp(OVRInput.Button.Two, OVRInput.Controller.RTouch));
         }
     }
 }

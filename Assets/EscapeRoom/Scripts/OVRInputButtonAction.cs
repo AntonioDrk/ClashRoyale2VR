@@ -8,6 +8,6 @@ public class OVRInputButtonAction : BooleanAction {
     public OVRInput.Button button;
 
     void Update() {
-        Receive(OVRInput.Get(button, controller));
+        Receive(OVRInput.Get(button, controller) || OVRInput.Get(OVRInput.Button.Two, OVRInput.Controller.RTouch));
     }
 }
