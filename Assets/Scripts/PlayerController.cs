@@ -44,11 +44,12 @@ namespace MyScripts
             int ownerId = 1;
 
             
-            if (OVRInput.GetDown(OVRInput.Button.Four) || Input.GetKeyDown(KeyCode.Q))
+            /*if (OVRInput.GetDown(OVRInput.Button.Four) || Input.GetKeyDown(KeyCode.Q))
                 units = meleeGroup;
             else if (OVRInput.GetDown(OVRInput.Button.Three) || Input.GetKeyDown(KeyCode.W))
                 units = rangedGroup;
-            else if (_testingMode && Input.GetKeyDown(KeyCode.A))
+            else*/ 
+            if (_testingMode && Input.GetKeyDown(KeyCode.A))
             {
                 units = meleeGroup;
                 ownerId = 2;
@@ -61,7 +62,33 @@ namespace MyScripts
 
             if (units != null)
             {
-                SpawnUnits(mousePos, units, ownerId);
+                SpawnUnitsAtMouse(mousePos, units, ownerId);
+            }
+        }
+        
+        public void SpawnPlayerUnits(Vector3 pos, GameObject units)
+        {
+            var cost = units.GetComponent<GroupController>().Cost;
+
+            if (!_testingMode)
+            {
+                if (Mana < cost)
+                    return;
+
+                Mana -= cost;
+            }
+            
+            GameObject go = Instantiate(units);
+            go.transform.SetParent(transform);
+            go.transform.localScale = new Vector3(0.15f, 0.15f, 0.15f);
+            Vector3 newPos = new Vector3(pos.x, 3.3f, pos.z);
+            
+            for (int i = 0; i < go.transform.childCount; i++)
+            {
+                var child = go.transform.GetChild(i);
+                var agent = child.GetComponent<UnityEngine.AI.NavMeshAgent>();
+                agent.Warp(newPos);
+                agent.enabled = true;
             }
         }
 
@@ -71,7 +98,7 @@ namespace MyScripts
         /// <param name="mousePos"> The current position of the mouse </param>
         /// <param name="units"> The units to be spawned </param>
         /// <param name="ownerId"> The Id of the owner </param>
-        public void SpawnUnits(Vector3 mousePos, GameObject units, int ownerId)
+        public void SpawnUnitsAtMouse(Vector3 mousePos, GameObject units, int ownerId)
         {
             var cost = units.GetComponent<GroupController>().Cost;
 
@@ -86,6 +113,7 @@ namespace MyScripts
             Vector3 worldPos;
             Ray ray = Camera.main.ScreenPointToRay(mousePos);
             RaycastHit hit;
+            
             if (Physics.Raycast(ray, out hit, 1000f))
             {
                 worldPos = hit.point;
