@@ -21,7 +21,7 @@ namespace MyScripts
         private float _cooldown = 0;
         private float distance = 999;
 
-        protected CapsuleCollider cc;
+        protected SphereCollider cc;
         protected MeshRenderer meshRenderer;
 
         protected GameObject target;
@@ -36,7 +36,7 @@ namespace MyScripts
             Range = 3f;
 
             meshRenderer = GetComponent<MeshRenderer>();
-            cc = GetComponent<CapsuleCollider>();
+            cc = GetComponent<SphereCollider>();
             cc.radius = TriggerZoneRadius;
         }
 

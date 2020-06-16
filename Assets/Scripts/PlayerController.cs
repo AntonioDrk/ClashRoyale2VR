@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
+using TMPro;
 
 namespace MyScripts
 {
@@ -34,10 +35,12 @@ namespace MyScripts
         [SerializeField] 
         private ManaBar manaBar; 
         [SerializeField] 
-        private Text manaText;
+        private TextMeshProUGUI manaText;
 
         public List<GameObject> playerUnits = new List<GameObject>();
         public List<GameObject> enemyUnits = new List<GameObject>();
+        // The spawn points the AI is gonna use to spawn enemies, it chooses randomly
+        public List<Transform> AiSpawnPoints;
 
         // Start is called before the first frame update
         void Start()
@@ -68,7 +71,7 @@ namespace MyScripts
         void Update()
         {
 
-            Vector3 mousePos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0f); 
+            /*Vector3 mousePos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0f); 
 
             GameObject units = null;
             int ownerId = 1;
@@ -89,24 +92,25 @@ namespace MyScripts
                 units = rangedGroup;
                 ownerId = 2;
             }
-
-            //when testing mode is true, the computer is not allowed to choose his moves
-            if (Mana_computer >= rangedGroup.GetComponent<GroupController>().Cost &&  _testingMode==false)//computerul face o mutare
-            {
-                Vector3 AIpos = new Vector3(396f, 249f, 0f);
-                
-                int val = ran.Next(0, 10);
-                Debug.Log("val = " + val);
-                if (val % 2 == 0)
-                    SpawnUnits(AIpos, rangedGroup, ownerId=2);
-                else
-                    SpawnUnits(AIpos, meleeGroup, ownerId=2);
-            }
-
+            
             if (units != null)
             {
                 SpawnUnits(mousePos, units, ownerId);
+            }*/
+            
+            //when testing mode is true, the computer is not allowed to choose his moves
+            if (Mana_computer >= rangedGroup.GetComponent<GroupController>().Cost &&  _testingMode==false)//computerul face o mutare
+            {
+                Transform enemySpawnPoint = AiSpawnPoints[ran.Next(0, AiSpawnPoints.Count)]; 
+
+                int val = ran.Next(0, 10);
+                if (val % 2 == 0)
+                    SpawnUnits(enemySpawnPoint.position, rangedGroup, 2);
+                else
+                    SpawnUnits(enemySpawnPoint.position, meleeGroup, 2);
             }
+
+            
         }
         
         public void SpawnPlayerUnits(Vector3 pos, GameObject units)
@@ -138,10 +142,10 @@ namespace MyScripts
         /// <summary>
         /// Spawns a group of units at mouse position
         /// </summary>
-        /// <param name="mousePos"> The current position of the mouse </param>
+        /// <param name="targetPos"> The position where to spawn the unit </param>
         /// <param name="units"> The units to be spawned </param>
         /// <param name="ownerId"> The Id of the owner </param>
-        public void SpawnUnits(Vector3 mousePos, GameObject units, int ownerId)
+        public void SpawnUnits(Vector3 targetPos, GameObject units, int ownerId)
         {
             var cost = units.GetComponent<GroupController>().Cost;
 
@@ -168,36 +172,21 @@ namespace MyScripts
                 Mana_computer -= cost;
                 
             playerUnits.Remove(units);//nu stiu ce face linia asta
-
-
-            Vector3 worldPos;
-            Ray ray = Camera.main.ScreenPointToRay(mousePos);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, 1000f))
-            {
-                worldPos = hit.point;
-            }
-            else
-            {
-                worldPos = Camera.main.ScreenToWorldPoint(mousePos);
-                return;
-            }
-
-            GameObject go = Instantiate(units) as GameObject;
+            
+            GameObject go = Instantiate(units);
 
             if (ownerId == 1)
-                go.transform.SetParent(this.transform);
+                go.transform.SetParent(transform);
             else
                 go.transform.SetParent(EnemySide.transform);
 
             go.transform.localScale = new Vector3(0.15f, 0.15f, 0.15f);
-            worldPos = new Vector3(worldPos.x, 3.3f, worldPos.z);
 
             for (int i = 0; i < go.transform.childCount; i++)
             {
                 var child = go.transform.GetChild(i);
                 var agent = child.GetComponent<UnityEngine.AI.NavMeshAgent>();
-                agent.Warp(worldPos);
+                agent.Warp(targetPos);
                 agent.enabled = true;
 
                 if (ownerId == 2)
