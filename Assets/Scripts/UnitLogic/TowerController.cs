@@ -30,7 +30,6 @@ namespace MyScripts
         // Start is called before the first frame update
         void Start()
         {
-            Health = 1000;
             Damage = 50;
             TriggerZoneRadius = 3f;
             Range = 3f;

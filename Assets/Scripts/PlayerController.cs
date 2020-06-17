@@ -99,9 +99,9 @@ namespace MyScripts
             }*/
             
             //when testing mode is true, the computer is not allowed to choose his moves
-            if (Mana_computer >= rangedGroup.GetComponent<GroupController>().Cost &&  _testingMode==false)//computerul face o mutare
+            if (Mana_computer >= rangedGroup.GetComponent<GroupController>().Cost &&  _testingMode==false) //computerul face o mutare
             {
-                Transform enemySpawnPoint = AiSpawnPoints[ran.Next(0, AiSpawnPoints.Count)]; 
+                Transform enemySpawnPoint = SelectUnitTransform(); 
 
                 int val = ran.Next(0, 10);
                 if (val % 2 == 0)
@@ -109,8 +109,11 @@ namespace MyScripts
                 else
                     SpawnUnits(enemySpawnPoint.position, meleeGroup, 2);
             }
+        }
 
-            
+        private Transform SelectUnitTransform()
+        {
+            return AiSpawnPoints[ran.Next(0, AiSpawnPoints.Count)];
         }
         
         public void SpawnPlayerUnits(Vector3 pos, GameObject units)
